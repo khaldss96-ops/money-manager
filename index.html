@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>لوحة إدارة الأموال</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&family=Space+Grotesk:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="login-overlay" id="loginOverlay">
+      <div class="login-card">
+        <h1>مرحبا بك في مدير الأموال</h1>
+        <p>أدخل اسم المستخدم وكلمة المرور لحماية بياناتك.</p>
+        <div class="field-group">
+          <label for="username">اسم المستخدم</label>
+          <input id="username" name="username" autocomplete="username" type="text" placeholder="مثلاً: admin" />
+        </div>
+        <div class="field-group">
+          <label for="password">كلمة المرور</label>
+          <input id="password" name="password" autocomplete="current-password" type="password" placeholder="••••••••" />
+        </div>
+        <button class="primary-btn" onclick="enterApp()">دخول آمن</button>
+      </div>
+    </div>
+
+    <main class="app-shell">
+      <header class="top-bar">
+        <div>
+          <p class="eyebrow">نظام دقيق لإدارة المال</p>
+          <h1>مركز التحكم المالي</h1>
+        </div>
+        <div class="status-pill">
+          <span>متصل</span>
+          <div class="pulse"></div>
+        </div>
+      </header>
+
+      <nav class="page-tabs">
+        <button class="tab active" data-target="dashboardPage">لوحة التحكم</button>
+        <button class="tab" data-target="sectionsPage">الأقسام</button>
+        <button class="tab" data-target="cashPage">كاش</button>
+        <button class="tab" data-target="transfersPage">تحويلات</button>
+        <button class="tab" data-target="reportsPage">تقارير</button>
+        <button class="tab" data-target="settingsPage">إعدادات</button>
+      </nav>
+
+      <section class="page active" id="dashboardPage">
+        <div class="actions-row">
+          <button class="ghost-btn" data-action="shortcut-receipt" data-mode="cash"
+            >إضافة إيصال كاش</button
+          >
+          <button class="ghost-btn" data-action="shortcut-receipt" data-mode="transfer"
+            >إضافة إيصال تحويل</button
+          >
+          <button class="ghost-btn" data-action="shortcut-section">إضافة قسم</button>
+        </div>
+
+        <div class="cards-grid">
+          <article class="card">
+            <h3>إنجاز الكاش</h3>
+            <p class="label">إجمالي الكاش</p>
+            <p class="value" id="cashTotalValue">0 دينار ليبي</p>
+          </article>
+          <article class="card">
+            <h3>مصاريف الكاش</h3>
+            <p class="label">مصروف الكاش</p>
+            <p class="value" id="cashSpendingValue">0 دينار ليبي</p>
+          </article>
+          <article class="card">
+            <h3>رصيد الكاش</h3>
+            <p class="label">رصيد الكاش</p>
+            <p class="value" id="cashBalanceValue">0 دينار ليبي</p>
+          </article>
+          <article class="card accent">
+            <h3>إنجاز التحويلات</h3>
+            <p class="label">إجمالي التحويلات</p>
+            <p class="value" id="transferTotalValue">0 دينار ليبي</p>
+          </article>
+          <article class="card accent">
+            <h3>مصاريف التحويل</h3>
+            <p class="label">مصروف التحويلات</p>
+            <p class="value" id="transferSpendingValue">0 دينار ليبي</p>
+          </article>
+          <article class="card accent">
+            <h3>رصيد التحويل</h3>
+            <p class="label">رصيد التحويلات</p>
+            <p class="value" id="transferBalanceValue">0 دينار ليبي</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="page" id="sectionsPage">
+        <div class="actions-row">
+          <button class="primary-btn" data-open-modal="sectionModal">إضافة قسم</button>
+          <button class="ghost-btn" data-action="delete-sections">حذف الأقسام المحددة</button>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+              <th class="checkbox-column">
+                <input
+                  type="checkbox"
+                  class="select-all-section-checkbox"
+                  name="selectAllSections"
+                  aria-label="تحديد كل الأقسام"
+                />
+              </th>
+              <th>تسلسل</th>
+              <th>اسم القسم</th>
+              <th>نوع القسم</th>
+              <th>نوع الإيصال</th>
+              <th>عدد الإيصالات</th>
+            </tr>
+            </thead>
+            <tbody id="sectionsTableBody">
+              <tr>
+                <td>1</td>
+                <td>مبيعات كاش</td>
+                <td>إيراد</td>
+                <td>كاش</td>
+                <td>12</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>مشتريات تحويل</td>
+                <td>صرف</td>
+                <td>تحويل</td>
+                <td>8</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>تسويات كاش</td>
+                <td>صرف</td>
+                <td>كاش</td>
+                <td>3</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="page" id="cashPage">
+        <div class="actions-row">
+          <button class="primary-btn" data-open-modal="receiptModal" data-type="cash">إضافة إيصال</button>
+          <button class="ghost-btn" data-action="edit-receipt" data-type="cash">تعديل إيصال</button>
+          <button class="ghost-btn" data-action="remove-receipt" data-type="cash">حذف إيصال</button>
+          <input type="search" name="cashSearch" placeholder="ابحث باسم الإيصال" />
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th class="checkbox-column">
+                  <input
+                    type="checkbox"
+                    class="select-all-checkbox"
+                    data-mode="cash"
+                    name="selectAllCash"
+                    aria-label="تحديد جميع إيصالات الكاش"
+                  />
+                </th>
+                <th>تسلسل</th>
+                <th>الاسم</th>
+                <th>المبلغ</th>
+                <th>القسم</th>
+                <th>التاريخ</th>
+                <th>ملاحظة</th>
+                <th>إرفاق صورة</th>
+              </tr>
+            </thead>
+            <tbody id="cashTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="page" id="transfersPage">
+        <div class="actions-row">
+          <button class="primary-btn" data-open-modal="receiptModal" data-type="transfer">إضافة إيصال</button>
+          <button class="ghost-btn" data-action="edit-receipt" data-type="transfer">تعديل إيصال</button>
+          <button class="ghost-btn" data-action="remove-receipt" data-type="transfer">حذف إيصال</button>
+          <input type="search" name="transferSearch" placeholder="ابحث باسم الإيصال" />
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th class="checkbox-column">
+                  <input
+                    type="checkbox"
+                    class="select-all-checkbox"
+                    data-mode="transfer"
+                    name="selectAllTransfer"
+                    aria-label="تحديد جميع إيصالات التحويل"
+                  />
+                </th>
+                <th>تسلسل</th>
+                <th>الاسم</th>
+                <th>المبلغ</th>
+                <th>القسم</th>
+                <th>التاريخ</th>
+                <th>ملاحظة</th>
+                <th>إرفاق صورة</th>
+              </tr>
+            </thead>
+            <tbody id="transferTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="page" id="reportsPage">
+        <div class="actions-row">
+          <input type="date" id="reportStartDate" />
+          <input type="date" id="reportEndDate" />
+          <select id="reportModeFilter">
+            <option value="all">كل الأنواع</option>
+            <option value="cash">كاش</option>
+            <option value="transfer">تحويل</option>
+          </select>
+          <select id="reportSectionFilter">
+            <option value="all">كل الأقسام</option>
+          </select>
+          <div class="actions-row-buttons">
+            <button class="primary-btn" id="exportWordButton">تصدير إلى ورد</button>
+            <button class="primary-btn" id="printPreviewButton">معاينة قبل الطباعة</button>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>تسلسل</th>
+                <th>إسم الإيصال</th>
+                <th>المبلغ</th>
+                <th>القسم</th>
+                <th>نوع الإيصال</th>
+                <th>التاريخ</th>
+              </tr>
+            </thead>
+            <tbody id="reportsTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="page" id="settingsPage">
+        <div class="settings-grid">
+          <article class="settings-card">
+            <h3>إعدادات المستخدم</h3>
+            <form id="userSettingsForm" class="settings-form">
+              <label>
+                اسم المستخدم
+                <input
+                  type="text"
+                  name="userName"
+                  id="settingsUserName"
+                  autocomplete="name"
+                  required
+                />
+              </label>
+              <label>
+                البريد الإلكتروني
+                <input
+                  type="email"
+                  name="userEmail"
+                  id="settingsUserEmail"
+                  autocomplete="email"
+                  required
+                />
+              </label>
+              <label>
+                كلمة المرور
+                <input
+                  type="password"
+                  name="userPassword"
+                  id="settingsUserPassword"
+                  autocomplete="new-password"
+                  required
+                />
+              </label>
+              <div class="settings-actions">
+                <button type="submit" class="primary-btn small">
+                  حفظ بيانات المستخدم
+                </button>
+                <span class="settings-status" id="userSettingsStatus"></span>
+              </div>
+            </form>
+          </article>
+          <article class="settings-card">
+            <h3>إعدادات النسخ الاحتياطي</h3>
+            <p class="settings-hint">
+              قم بإنشاء نسخة احتياطية لبيانات الأقسام والإيصالات، أو استعادة نسخة محفوظة.
+            </p>
+            <div class="settings-actions stacked">
+              <button type="button" class="primary-btn" id="backupDownloadButton">
+                تحميل نسخة احتياطية
+              </button>
+              <button type="button" class="ghost-btn" id="backupRestoreButton">
+                استعادة من ملف
+              </button>
+              <input type="file" id="backupFileInput" accept="application/json" hidden />
+              <span class="settings-status" id="backupStatus">
+                آخر نسخة: <span id="lastBackupBadge">لا يوجد</span>
+              </span>
+              <span class="settings-status" id="backupStatusMessage"></span>
+            </div>
+          </article>
+          <article class="settings-card">
+            <h3>معلومات البرنامج</h3>
+            <ul class="program-info">
+              <li><strong>الإصدار:</strong> 1.0.2</li>
+              <li><strong>المطور:</strong> نظام إدارة الأموال الذكي</li>
+              <li><strong>آخر تحديث:</strong> ديسمبر 2025</li>
+            </ul>
+            <button type="button" class="ghost-btn danger" id="programInfoResetButton">
+              إعادة ضبط البيانات بالكامل
+            </button>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <div class="modal" id="sectionModal" role="dialog" aria-hidden="true" tabindex="-1" inert>
+      <div class="modal-card">
+        <h3>إضافة قسم</h3>
+        <form id="sectionForm">
+          <label for="sectionName">
+            اسم القسم
+            <input id="sectionName" type="text" name="name" autocomplete="organization" required />
+          </label>
+          <label for="sectionType">
+            نوع القسم
+            <select id="sectionType" name="type" autocomplete="off">
+              <option value="revenue">إيراد</option>
+              <option value="expense">صرف</option>
+            </select>
+          </label>
+          <label>
+            نوع الإيصال
+            <select id="sectionReceiptType" name="receiptType" autocomplete="off">
+              <option value="cash">كاش</option>
+              <option value="transfer">تحويل</option>
+            </select>
+          </label>
+          <div class="modal-actions">
+            <button type="submit" class="primary-btn">حفظ القسم</button>
+            <button type="button" class="ghost-btn" data-close-modal>إلغاء</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="modal" id="receiptModal" role="dialog" aria-hidden="true" tabindex="-1" inert>
+      <div class="modal-card">
+        <h3 id="receiptModalTitle">إضافة إيصال</h3>
+        <form id="receiptForm">
+          <label for="receiptName">
+            اسم الإيصال
+            <input id="receiptName" type="text" name="name" autocomplete="off" required />
+          </label>
+          <label for="receiptAmount">
+            المبلغ
+            <input id="receiptAmount" type="number" name="amount" autocomplete="off" min="1" required />
+          </label>
+          <label for="receiptSection">
+            القسم
+            <select id="receiptSection" name="sectionId" autocomplete="off" required></select>
+          </label>
+          <!-- نوع الإيصال يُحدد تلقائياً بناءً على نوع القسم المختار -->
+          <label>
+            التاريخ
+            <input id="receiptDate" type="date" name="date" autocomplete="off" required />
+          </label>
+          <label for="receiptNote">
+            ملاحظة
+            <input id="receiptNote" type="text" name="note" autocomplete="off" />
+          </label>
+          <div class="modal-actions">
+            <button type="submit" class="primary-btn">إضافة</button>
+            <button type="button" class="ghost-btn" data-close-modal>إلغاء</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="modal" id="confirmModal" role="dialog" aria-hidden="true" tabindex="-1" inert>
+      <div class="modal-card">
+        <h3>تأكيد الحذف</h3>
+        <p id="confirmMessage">هل تريد حذف آخر قسم؟</p>
+        <div class="modal-actions">
+          <button class="ghost-btn" data-close-modal>إلغاء</button>
+          <button class="primary-btn" id="confirmDeleteButton">حذف نهائي</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
